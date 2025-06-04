@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "497765909762",
+    "project_id": "flutterpuntoventa",
+    "storage_bucket": "flutterpuntoventa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497765909762:android:ac50efb9b7b1c788f32e1b",
+        "android_client_info": {
+          "package_name": "com.example.practica1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497765909762-fra779a1ggum2u2jf4hfdaqo0n8lueg3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.practica1",
+            "certificate_hash": "1daa8f021b0e9e981a84faf5ea1ab325306074eb"
+          }
+        },
+        {
+          "client_id": "497765909762-sh90nkk6g7vdf2nct9ada6glckbs0j1j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeMDZvjZiTXwzSvbE4N4TGXE-az_NhFtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497765909762-sh90nkk6g7vdf2nct9ada6glckbs0j1j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "497765909762-8fn8itmirbbtcglvqq72fi3src1v47c8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.practica1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

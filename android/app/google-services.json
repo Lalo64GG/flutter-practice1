@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "497765909762",
+    "project_id": "flutterpuntoventa",
+    "storage_bucket": "flutterpuntoventa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497765909762:android:eb74fee5067bd70ff32e1b",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeMDZvjZiTXwzSvbE4N4TGXE-az_NhFtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497765909762:android:ac50efb9b7b1c788f32e1b",
+        "android_client_info": {
+          "package_name": "com.example.practica1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeMDZvjZiTXwzSvbE4N4TGXE-az_NhFtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

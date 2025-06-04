@@ -1,30 +1,37 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
-import 'register_screen.dart';
+import 'login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final AuthService authService = AuthService();
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _signInWithEmail() async {
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -32,23 +39,27 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final result = await authService.signInWithEmailPassword(
+      final result = await authService.registerWithEmailPassword(
         _emailController.text.trim(),
         _passwordController.text,
+        _nameController.text.trim(),
+        _lastNameController.text.trim(),
       );
 
       if (result != null) {
+        // Registro exitoso, navegar a home
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('¡Bienvenido de vuelta!'),
+            content: Text('Registro exitoso. ¡Bienvenido!'),
             backgroundColor: Colors.green,
           ),
         );
         
+        // Navegar a HomeScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => HomeScreen(user: result), // Ahora enviamos el CustomUser
+            builder: (_) => HomeScreen(user: result), // Enviamos el CustomUser
           ),
         );
       }
@@ -109,12 +120,40 @@ class _LoginScreenState extends State<LoginScreen> {
     if (value == null || value.isEmpty) {
       return 'La contraseña es requerida';
     }
+    if (value.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+    return null;
+  }
+
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Este campo es requerido';
+    }
+    if (value.length < 2) {
+      return 'Debe tener al menos 2 caracteres';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Confirma tu contraseña';
+    }
+    if (value != _passwordController.text) {
+      return 'Las contraseñas no coinciden';
+    }
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Crear Cuenta'),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(24.0),
@@ -123,17 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: 60),
-                
                 // Header
+                SizedBox(height: 20),
                 Icon(
-                  Icons.lock_outline,
+                  Icons.person_add,
                   size: 80,
                   color: Theme.of(context).primaryColor,
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: 16),
                 Text(
-                  '¡Bienvenido!',
+                  '¡Únete a nosotros!',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -141,15 +179,43 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Inicia sesión en tu cuenta',
+                  'Crea tu cuenta para comenzar',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.grey[600],
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 48),
+                SizedBox(height: 40),
 
-                // Email field
+                // Campos del formulario
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Nombre',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  validator: _validateName,
+                  textInputAction: TextInputAction.next,
+                ),
+                SizedBox(height: 16),
+
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Apellido',
+                    prefixIcon: Icon(Icons.person_outline),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  validator: _validateName,
+                  textInputAction: TextInputAction.next,
+                ),
+                SizedBox(height: 16),
+
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -165,7 +231,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 16),
 
-                // Password field
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -185,31 +250,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   validator: _validatePassword,
                   obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _signInWithEmail(),
+                  textInputAction: TextInputAction.next,
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 16),
 
-                // Forgot password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      // Implementar recuperación de contraseña
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Funcionalidad en desarrollo'),
-                        ),
-                      );
-                    },
-                    child: Text('¿Olvidaste tu contraseña?'),
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirmar Contraseña',
+                    prefixIcon: Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
+                  validator: _validateConfirmPassword,
+                  obscureText: _obscureConfirmPassword,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _register(),
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: 32),
 
-                // Login button
+                // Botón de registro
                 ElevatedButton(
-                  onPressed: _isLoading ? null : _signInWithEmail,
+                  onPressed: _isLoading ? null : _register,
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -226,11 +297,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         )
                       : Text(
-                          'Iniciar Sesión',
+                          'Crear Cuenta',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                 ),
-                SizedBox(height: 32),
+                SizedBox(height: 24),
 
                 // Divider
                 Row(
@@ -246,13 +317,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     Expanded(child: Divider()),
                   ],
                 ),
-                SizedBox(height: 32),
+                SizedBox(height: 24),
 
-                // Google button
+                // Botón de Google
                 OutlinedButton.icon(
                   onPressed: _isLoading ? null : _signInWithGoogle,
                   icon: Icon(Icons.login, color: Colors.red),
-                  label: Text('Iniciar sesión con Google'),
+                  label: Text('Continuar con Google'),
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -261,25 +332,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     side: BorderSide(color: Colors.red),
                   ),
                 ),
-                SizedBox(height: 32),
+                SizedBox(height: 24),
 
-                // Register link
+                // Link para ir al login
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '¿No tienes una cuenta? ',
+                      '¿Ya tienes una cuenta? ',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => RegisterScreen()),
+                          MaterialPageRoute(builder: (_) => LoginScreen()),
                         );
                       },
                       child: Text(
-                        'Regístrate',
+                        'Inicia Sesión',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),

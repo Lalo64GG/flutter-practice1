@@ -1,36 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:practica1/main.dart';
-
 import '../services/auth_service.dart';
 import 'login_screen.dart';
 
-
 class HomeScreen extends StatelessWidget {
-  final User user;
-  final AuthService authService = AuthService();
+  final CustomUser? user;
 
-  HomeScreen({super.key, required this.user});
+  const HomeScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hola ${user.displayName}'),
+        title: Text('Hola ${user?.displayName ?? 'Usuario'}'),
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
-              await authService.singOut();
+              await authService.signOut();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => LoginScreen())
+                MaterialPageRoute(builder: (_) => LoginScreen()),
               );
             },
-          )
+          ),
         ],
       ),
-      body: ProductListScreen(),
+      body: ProductListScreen(), // Aquí está el cambio principal
     );
   }
 }
